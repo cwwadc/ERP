@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>提成核算管理</title>
+    <meta charset="utf-8">
+    <!-- 指定以IE8的省份名来渲染 -->
+    <meta http-equiv="X-UA-Compatible" content="IE=EmulateIE8"/>
+    <link rel="shortcut icon" href="/images/favicon.ico" type="image/x-icon"/>
+    <script type="text/javascript" src="/js/jquery-1.8.0.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="/js/easyui-1.3.5/themes/default/easyui.css"/>
+    <link rel="stylesheet" type="text/css" href="/js/easyui-1.3.5/themes/icon.css"/>
+    <link type="text/css" rel="stylesheet" href="/css/common.css"/>
+    <script type="text/javascript" src="/js/easyui-1.3.5/jquery.easyui.min.js"></script>
+    <script type="text/javascript" src="/js/easyui-1.3.5/locale/easyui-lang-zh_CN.js"></script>
+    <script type="text/javascript" src="/js/My97DatePicker/WdatePicker.js"></script>
+    <script type="text/javascript" src="/js/common/common.js"></script>
+</head>
+<body>
+<!-- 数据显示table -->
+<div id="tablePanel" class="easyui-panel" data-options="fit:true" style="padding:1px;top:300px;" title="提成核算列表" iconCls="icon-list">
+    <table id="searchTable">
+        <tr>
+            <td>月份：</td>
+            <td>
+                <input type="text" name="searchName" id="searchName"
+                       onClick="WdatePicker({dateFmt:'yyyy-MM'})" class="txt Wdate" style="width:100px;"/>
+            </td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>
+                <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-search" id="searchBtn">查询</a>&nbsp;&nbsp;
+                <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-redo" id="searchResetBtn">重置</a>
+            </td>
+            <td>&nbsp;&nbsp;&nbsp;&nbsp;<span class="tip">注：此处包含零售+批发销售</span></td>
+        </tr>
+    </table>
+    <table id="tableData" style="top:300px;border-bottom-color:#FFFFFF"></table>
+</div>
+
+<div id="royaltyDlg" class="easyui-dialog" style="width:1200px;padding:10px 20px;top:40px"
+     closed="true" buttons="#dlg-buttons" modal="true" cache="false" collapsible="false" closable="true">
+    <form id="royaltyFM" method="post" novalidate>
+        <input type="hidden" id="royaltyId" name="royaltyId" />
+        <table>
+            <tr>
+                <td style="width:50px;height:50px;">业务员：</td>
+                <td style="width:200px;">
+                    <span id="saleName"></span>
+                    <input type="hidden" id="saleId" name="saleId"/>
+                </td>
+                <td style="width:40px;height:50px;">月份：</td>
+                <td style="width:200px;">
+                    <span id="monthTime"></span>
+                </td>
+                <td style="width:350px;"></td>
+            </tr>
+            <tr>
+                <td colspan="5">
+                    <!-- 业务员本月提成详细列表table -->
+                    <table id="saleData" style="top:100px;border-bottom-color:#FFFFFF"></table>
+                </td>
+                <td colspan="2" valign="top">
+                    <table width="100%" class="retail-amount-show">
+                        <tr>
+                            <td >总金额:</td>
+                            <td >
+                                <span id="allRoyalty"></span>
+                                <input type="hidden" id="royaltyAmount" name="royaltyAmount">
+                            </td>
+                        </tr>
+                        <tr></tr><tr></tr><tr></tr>
+                        <tr>
+                            <td>发放账户：</td>
+                            <td>
+                                <select name="AccountId" id="AccountId" style="width:110px;"></select>
+                                <img class="many-account-ico" src="/js/easyui-1.3.5/themes/icons/filelist.jpg"
+                                     style="display: none;"/>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </table>
+    </form>
+</div>
+<div id="dlg-buttons">
+    <a href="javascript:void(0)" id="saveroyalty" class="easyui-linkbutton" iconCls="icon-ok">保存</a>
+    <a href="javascript:void(0)" id="cancelroyalty" class="easyui-linkbutton" iconCls="icon-cancel"
+       onclick="javascript:$('#royaltyDlg').dialog('close')">取消</a>
+</div>
+
+<div id="royaltyDlgShow" class="easyui-dialog" style="width:1200px;padding:10px 20px;top:40px"
+     closed="true" buttons="#dlg-buttons-show" modal="true" cache="false" collapsible="false" closable="true">
+    <table>
+        <tr>
+            <td style="width:50px;height:50px;">业务员：</td>
+            <td style="width:200px;">
+                <span id="saleNameShow"></span>
+            </td>
+            <td style="width:40px;height:50px;">月份：</td>
+            <td style="width:200px;">
+                <span id="monthTimeShow"></span>
+            </td>
+            <td style="width:350px;"></td>
+        </tr>
+        <tr>
+            <td colspan="5">
+                <!-- 业务员本月提成详细列表table -->
+                <table id="saleDataShow" style="top:100px;border-bottom-color:#FFFFFF"></table>
+            </td>
+            <td colspan="2" valign="top">
+                <table width="100%" class="retail-amount-show">
+                    <tr>
+                        <td >总金额:</td>
+                        <td >
+                            <span id="allRoyaltyShow" class="change-amount-show"></span>
+                        </td>
+                    </tr>
+                    <tr></tr><tr></tr><tr></tr>
+                    <tr>
+                        <td>发放账户：</td>
+                        <td>
+                            <span id="AccountIdShow" class="change-amount-show"></span>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</div>
+<div id="dlg-buttons-show">
+    <a href="javascript:void(0)" id="printRoyaltyShow" class="easyui-linkbutton" iconCls="icon-print">打印</a>
+    <a href="javascript:void(0)" id="cancelRoyaltyShow" class="easyui-linkbutton" iconCls="icon-cancel"
+       onclick="javascript:$('#royaltyDlgShow').dialog('close')">取消</a>
+</div>
+
+
+<script type="text/javascript">
+    //初始化界面
+    var defaultAccountId = 0; //默认账户id
+    $(function () {
+        $("#searchTable .tip").css("padding-left", "15px").css("color", "red");
+        initTableData();
+        ininPager();
+        initForm();
+        initSystemData_account();
+    });
+
+    //获取账户信息
+    function initSystemData_account(){
+        $.ajax({
+            type:"get",
+            url: "/account/getAccount",
+            //设置为同步
+            async:false,
+            dataType: "json",
+            success: function (res) {
+                if(res && res.code === 200) {
+                    if(res.data) {
+                        accountList = res.data.accountList;
+                        var options = "";
+                        if(accountList !=null){
+                            options = "<option value=''>(空)</option>";
+                            for(var i = 0 ;i < accountList.length;i++) {
+                                var account = accountList[i];
+                                options += '<option value="' + account.id + '" data-currentAmount="' + account.currentamount + '">' + account.name + '</option>';
+                                if(account.isdefault) {
+                                    defaultAccountId = account.id; //给账户赋值默认id
+                                }
+                            }
+                            $("#AccountId").empty().append(options);
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    //防止表单提交重复
+    function initForm() {
+        $('#royaltyFM').form({
+            onSubmit: function () {
+                return false;
+            }
+        });
+    }
+
+    //初始化表格数据
+    function initTableData() {
+        $('#tableData').datagrid({
+            //title:'提成核算列表',
+            //iconCls:'icon-save',
+            //width:700,
+            height: heightInfo,
+            nowrap: false,
+            rownumbers: false,
+            //动画效果
+            animate: false,
+            //选中单行
+            singleSelect: true,
+            collapsible: false,
+            selectOnCheck: false,
+            //fitColumns:true,
+            //单击行是否选中
+            //checkOnSelect : false,
+            pagination: true,
+            //交替出现背景
+            striped: true,
+            //loadFilter: pagerFilter,
+            pageSize: initPageSize,
+            pageList: initPageNum,
+            columns: [[
+                //{field: 'id', width: 35, align: "center", checkbox: true},
+                {field: 'id', width: 35, align: "center", hidden: true},
+                {
+                    title: '操作', field: 'op', align: "center", width: 80, formatter: function (value, rec, index) {
+                        var str = '';
+                        var rowInfo = rec.id + 'AaBb' + rec.saleId + 'AaBb' + rec.saleName + 'AaBb' + rec.allRoyalty + 'AaBb' + rec.monthTime;
+                        str += '<img src="/js/easyui-1.3.5/themes/icons/list.png" style="cursor: pointer;" onclick="showroyalty(\'' + index + '\');"/>&nbsp;&nbsp;&nbsp;';
+                        if(!rec.status){
+                            str += '<img src="/js/easyui-1.3.5/themes/icons/pencil.png" style="cursor: pointer;" onclick="editroyalty(\'' + index + '\');"/>&nbsp;&nbsp;';
+                        }
+
+                        return str;
+                    }
+                },
+                {title: '销售Id', field: 'saleId', width: 100, hidden:true},
+                {title: '销售人', field: 'saleName', width: 100},
+                {title: '批发提成', field: 'wholesaleRoyalty', width: 100},
+                {title: '零售提成', field: 'retailRoyalty', width: 100},
+                {title: '总提成', field: 'allRoyalty', width: 100},
+                {title: '时间月份', field: 'monthTime', width: 100},
+                {title: '发放账户', field: 'accountName', width: 100},
+                {title: '状态', field: 'status', width: 100,formatter:function(value){
+                    return value? "已发放":"未发放";
+                }}
+            ]],
+            toolbar: [
+
+            ],
+            onLoadError: function () {
+                $.messager.alert('页面加载提示', '页面加载异常，请稍后再试！', 'error');
+                return;
+            }
+        });
+        dgResize();
+        showroyaltyDetails(1, initPageSize);
+    }
+
+    function initSaleData(saleId, monthTime){
+        $('#saleData').datagrid({
+            //title:'销售人员上月提成核算明细列表',
+            height:245,
+            rownumbers: true,
+            //动画效果
+            animate:false,
+            //选中单行
+            singleSelect : true,
+            collapsible:false,
+            selectOnCheck:false,
+            pagination: false,
+            //交替出现背景
+            striped : true,
+            showFooter: true,
+            columns: [[
+                {title: '单据编号', field: 'depotheadNum', width: 160},
+                {title: '商品信息', field: 'goodsInfo', width: 160},
+                {title: '单据日期', field: 'depotheadTime', width: 150},
+                {title: '单据金额', field: 'depotheadAmount', width: 150},
+                {title: '提成金额', field: 'royaltyAmount', width: 150}
+            ]],
+            toolbar: [
+
+            ],
+            onLoadError: function () {
+                $.messager.alert('页面加载提示', '页面加载异常，请稍后再试！', 'error');
+                return;
+            }
+        });
+
+        $.ajax({
+            type:"get",
+            url: '/royalty/getSaleData',
+            data: {
+                saleId: saleId,
+                monthTime: monthTime
+            },
+            dataType: "json",
+            success: function (res) {
+                if(res && res.code === 200) {
+                    var data = res.data;
+                    $("#saleData").datagrid('loadData',data);
+                }
+            },
+            error:function() {
+                $.messager.alert('查询提示','查询数据后台异常，请稍后再试！','error');
+            }
+        });
+    }
+
+    function initSaleDataShow(saleId, monthTime){
+        $('#saleDataShow').datagrid({
+            //title:'销售人员上月提成核算明细列表',
+            height:245,
+            rownumbers: true,
+            //动画效果
+            animate:false,
+            //选中单行
+            singleSelect : true,
+            collapsible:false,
+            selectOnCheck:false,
+            pagination: false,
+            //交替出现背景
+            striped : true,
+            showFooter: true,
+            columns: [[
+                {title: '单据编号', field: 'depotheadNum', width: 160},
+                {title: '商品信息', field: 'goodsInfo', width: 160},
+                {title: '单据日期', field: 'depotheadTime', width: 150},
+                {title: '单据金额', field: 'depotheadAmount', width: 150},
+                {title: '提成金额', field: 'royaltyAmount', width: 150}
+            ]],
+            toolbar: [
+
+            ],
+            onLoadError: function () {
+                $.messager.alert('页面加载提示', '页面加载异常，请稍后再试！', 'error');
+                return;
+            }
+        });
+
+        $.ajax({
+            type:"get",
+            url: '/royalty/getSaleData',
+            data: {
+                saleId: saleId,
+                monthTime: monthTime
+            },
+            dataType: "json",
+            success: function (res) {
+                if(res && res.code === 200) {
+                    var data = res.data;
+                    $("#saleDataShow").datagrid('loadData',data);
+                }
+            },
+            error:function() {
+                $.messager.alert('查询提示','查询数据后台异常，请稍后再试！','error');
+            }
+        });
+    }
+
+
+    //分页信息处理
+    function ininPager() {
+        try {
+            var opts = $("#tableData").datagrid('options');
+            var pager = $("#tableData").datagrid('getPager');
+            pager.pagination({
+                onSelectPage: function (pageNum, pageSize) {
+                    opts.pageNumber = pageNum;
+                    opts.pageSize = pageSize;
+                    pager.pagination('refresh', {
+                        pageNumber: pageNum,
+                        pageSize: pageSize
+                    });
+                    showroyaltyDetails(pageNum, pageSize);
+                }
+            });
+        }
+        catch (e) {
+            $.messager.alert('异常处理提示', "分页信息异常 :  " + e.name + ": " + e.message, 'error');
+        }
+    }
+
+
+    //保存信息
+    $("#saveroyalty").off("click").on("click", function () {
+        //校验表单
+        var accountId = $("#AccountId option:selected").val();
+        if(accountId==null || accountId==""){
+            $.messager.alert('提示','请选择发放账户！','warning');
+            return;
+        }
+        //
+        $.ajax({
+            url: "/royalty/extendRoyalty",
+            type: "post",
+            dataType: "json",
+            async: false,
+            data: ({
+                info: JSON.stringify($("#royaltyFM").serializeObject())
+            }),
+            success: function(res) {
+                if(res && res.code === 200) {
+                    $('#royaltyDlg').dialog('close');
+                    //加载完以后重新初始化
+                    var opts = $("#tableData").datagrid('options');
+                    showroyaltyDetails(opts.pageNumber, opts.pageSize);
+                }else if(res && res.code == 201){
+                    $.messager.alert('提示', '该账户余额不足！', 'warning');
+                    return;
+                }
+            },
+            //此处添加错误处理
+            error: function () {
+                $.messager.alert('提示', '保存提成核算信息异常，请稍后再试！', 'error');
+                return;
+            }
+        });
+    });
+
+    //编辑信息
+    function editroyalty(index, res) {
+        //初始化原表数据
+        if(!res) {
+            res = $("#tableData").datagrid("getRows")[index];
+        }
+        $("#royaltyId").val(res.id);
+        $("#saleId").val(res.saleId);
+        $("#saleName").text(res.saleName);
+        $("#allRoyalty").text(res.allRoyalty);
+        $("#royaltyAmount").val(res.allRoyalty);
+        $("#monthTime").text(res.monthTime);
+
+        //初始化表格数据（该销售人员上月提成详细）
+        initSaleData(res.saleId, res.monthTime);
+
+        //打开编辑页面
+        $('#royaltyDlg').dialog('open').dialog('setTitle', '<img src="/js/easyui-1.3.5/themes/icons/pencil.png"/>&nbsp;编辑提成核算信息');
+    }
+
+    //编辑信息
+    function showroyalty(index, res) {
+        //初始化原表数据
+        if(!res) {
+            res = $("#tableData").datagrid("getRows")[index];
+        }
+        $("#saleNameShow").text(res.saleName);
+        $("#royaltyAmountShow").text(res.allRoyalty);
+        $("#allRoyaltyShow").text(res.allRoyalty);
+        $("#monthTimeShow").text(res.monthTime);
+        $("#AccountIdShow").text(res.accountName);
+
+        //初始化表格数据（该销售人员上月提成详细）
+        initSaleDataShow(res.saleId, res.monthTime);
+
+        //打开编辑页面
+        $('#royaltyDlgShow').show().dialog('open').dialog('setTitle','<img src="/js/easyui-1.3.5/themes/icons/list.png"/>&nbsp;查看提成核算信息');
+    }
+
+    //搜索处理
+    $("#searchBtn").unbind().bind({
+        click: function () {
+            showroyaltyDetails(1, initPageSize);
+            var opts = $("#tableData").datagrid('options');
+            var pager = $("#tableData").datagrid('getPager');
+            opts.pageNumber = 1;
+            opts.pageSize = initPageSize;
+            pager.pagination('refresh', {
+                pageNumber: 1,
+                pageSize: initPageSize
+            });
+        }
+    });
+    function showroyaltyDetails(pageNo, pageSize) {
+        var searchName = $.trim($("#searchName").val());
+        $.ajax({
+            type: "get",
+            url: "/royalty/list",
+            dataType: "json",
+            data: ({
+                search: JSON.stringify({
+                    monthTime: searchName
+                }),
+                currentPage: pageNo,
+                pageSize: pageSize
+            }),
+            success: function (res) {
+                if(res && res.code === 200){
+                    if(res.data && res.data.page) {
+                        $("#tableData").datagrid('loadData', res.data.page);
+                    }
+                }
+            },
+            //此处添加错误处理
+            error: function () {
+                $.messager.alert('查询提示', '查询数据后台异常，请稍后再试！', 'error');
+                return;
+            }
+        });
+    }
+
+
+    //重置按钮
+    $("#searchResetBtn").unbind().bind({
+        click: function () {
+            $("#searchName").val("");
+            $("#searchType").val("");
+            //加载完以后重新初始化
+            $("#searchBtn").click();
+        }
+    });
+
+
+    //打印单据
+    $("#printRoyaltyShow").off("click").on("click",function(){
+        var tableString = $("#royaltyDlgShow").html();
+        localStorage.setItem("tableString",tableString);
+        window.open("../../js/print/print_form.html","location:No;status:No;help:No;dialogWidth:800px;dialogHeight:600px;scroll:auto;");
+    });
+
+
+
+</script>
+</body>
+</html>

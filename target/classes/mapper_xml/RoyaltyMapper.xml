@@ -1,0 +1,347 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jsh.erp.datasource.mappers.RoyaltyMapper">
+
+    <resultMap id="BaseResultMap" type="com.jsh.erp.datasource.entities.Royalty">
+        <id column="id" jdbcType="BIGINT" property="id" />
+        <id column="saleId" jdbcType="BIGINT" property="saleId" />
+        <result column="saleName" jdbcType="VARCHAR" property="saleName" />
+        <result column="wholesaleRoyalty" jdbcType="DECIMAL" property="wholesaleRoyalty" />
+        <result column="retailRoyalty" jdbcType="DECIMAL" property="retailRoyalty" />
+        <result column="allRoyalty" jdbcType="DECIMAL" property="allRoyalty" />
+        <result column="monthTime" jdbcType="VARCHAR" property="monthTime" />
+        <result column="status" jdbcType="BIT" property="status" />
+        <result column="accountId" jdbcType="BIGINT" property="accountId" />
+        <result column="accountName" jdbcType="VARCHAR" property="accountName" />
+        <result column="tenant_id" jdbcType="BIGINT" property="tenantId" />
+        <result column="delete_Flag" jdbcType="VARCHAR" property="deleteFlag" />
+    </resultMap>
+
+    <sql id="Example_Where_Clause">
+        <where>
+            <foreach collection="oredCriteria" item="criteria" separator="or">
+                <if test="criteria.valid">
+                    <trim prefix="(" prefixOverrides="and" suffix=")">
+                        <foreach collection="criteria.criteria" item="criterion">
+                            <choose>
+                                <when test="criterion.noValue">
+                                    and ${criterion.condition}
+                                </when>
+                                <when test="criterion.singleValue">
+                                    and ${criterion.condition} #{criterion.value}
+                                </when>
+                                <when test="criterion.betweenValue">
+                                    and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                                </when>
+                                <when test="criterion.listValue">
+                                    and ${criterion.condition}
+                                    <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                                        #{listItem}
+                                    </foreach>
+                                </when>
+                            </choose>
+                        </foreach>
+                    </trim>
+                </if>
+            </foreach>
+        </where>
+    </sql>
+
+    <sql id="Update_By_Example_Where_Clause">
+        <where>
+            <foreach collection="example.oredCriteria" item="criteria" separator="or">
+                <if test="criteria.valid">
+                    <trim prefix="(" prefixOverrides="and" suffix=")">
+                        <foreach collection="criteria.criteria" item="criterion">
+                            <choose>
+                                <when test="criterion.noValue">
+                                    and ${criterion.condition}
+                                </when>
+                                <when test="criterion.singleValue">
+                                    and ${criterion.condition} #{criterion.value}
+                                </when>
+                                <when test="criterion.betweenValue">
+                                    and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                                </when>
+                                <when test="criterion.listValue">
+                                    and ${criterion.condition}
+                                    <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                                        #{listItem}
+                                    </foreach>
+                                </when>
+                            </choose>
+                        </foreach>
+                    </trim>
+                </if>
+            </foreach>
+        </where>
+    </sql>
+
+    <sql id="Base_Column_List">
+        id, saleId, saleName, wholesaleRoyalty, retailRoyalty, allRoyalty, monthTime, status, accountId, accountName, tenant_id, delete_Flag
+    </sql>
+
+    <select id="selectByExample" parameterType="com.jsh.erp.datasource.entities.RoyaltyExample" resultMap="BaseResultMap">
+        select
+        <if test="distinct">
+            distinct
+        </if>
+        <include refid="Base_Column_List" />
+        from jsh_royalty
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause" />
+        </if>
+        <if test="orderByClause != null">
+            order by ${orderByClause}
+        </if>
+    </select>
+
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from jsh_royalty
+        where id = #{id,jdbcType=BIGINT}
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+        delete from jsh_royalty
+        where id = #{id,jdbcType=BIGINT}
+    </delete>
+
+    <delete id="deleteByExample" parameterType="com.jsh.erp.datasource.entities.RoyaltyExample">
+        delete from jsh_royalty
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause" />
+        </if>
+    </delete>
+
+    <insert id="insert" parameterType="com.jsh.erp.datasource.entities.Royalty">
+      insert into jsh_royalty (
+        id, saleId, saleName, wholesaleRoyalty,retailRoyalty,
+        allRoyalty, monthTime, status, accountId, accountName, tenant_id, delete_Flag
+      )values (
+        #{id,jdbcType=BIGINT}, #{saleId, jdbcType=BIGINT}, #{saleName,jdbcType=VARCHAR},#{wholesaleRoyalty,jdbcType=DECIMAL},
+        #{retailRoyalty,jdbcType=DECIMAL}, #{allRoyalty,jdbcType=DECIMAL},#{monthTime,jdbcType=VARCHAR},
+        #{status,jdbcType=BIT}, #{accountId, jdbcType=BIGINT}, #{accountName, jdbcType=VARCHAR}, #{tenantId,jdbcType=BIGINT}, #{deleteFlag,jdbcType=VARCHAR}
+      )
+    </insert>
+
+    <insert id="insertSelective" parameterType="com.jsh.erp.datasource.entities.Royalty">
+        insert into jsh_royalty
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="saleId != null">
+                saleId,
+            </if>
+            <if test="saleName != null">
+                saleName,
+            </if>
+            <if test="wholesaleRoyalty != null">
+                wholesaleRoyalty,
+            </if>
+            <if test="retailRoyalty != null">
+                retailRoyalty,
+            </if>
+            <if test="allRoyalty != null">
+                allRoyalty,
+            </if>
+            <if test="monthTime != null">
+                monthTime,
+            </if>
+            <if test="status != null">
+                status,
+            </if>
+            <if test="accountId != null">
+                accountId,
+            </if>
+            <if test="accountName != null">
+                accountName,
+            </if>
+            <if test="tenantId != null">
+                tenant_id,
+            </if>
+            <if test="deleteFlag != null">
+                delete_Flag,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=BIGINT},
+            </if>
+            <if test="saleId != null">
+                #{saleId,jdbcType=BIGINT},
+            </if>
+            <if test="saleName != null">
+                #{saleName,jdbcType=VARCHAR},
+            </if>
+            <if test="wholesaleRoyalty != null">
+                #{wholesaleRoyalty,jdbcType=DECIMAL},
+            </if>
+            <if test="retailRoyalty != null">
+                #{retailRoyalty,jdbcType=DECIMAL},
+            </if>
+            <if test="allRoyalty != null">
+                #{allRoyalty,jdbcType=DECIMAL},
+            </if>
+            <if test="monthTime != null">
+                #{monthTime,jdbcType=VARCHAR},
+            </if>
+            <if test="status != null">
+                #{status,jdbcType=BIT},
+            </if>
+            <if test="accountId != null">
+                #{accountId,jdbcType=BIGINT},
+            </if>
+            <if test="accountName != null">
+                #{accountName,jdbcType=VARCHAR},
+            </if>
+            <if test="tenantId != null">
+                #{tenantId,jdbcType=BIGINT},
+            </if>
+            <if test="deleteFlag != null">
+                #{deleteFlag,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+
+    <select id="countByExample" parameterType="com.jsh.erp.datasource.entities.RoyaltyExample" resultType="java.lang.Integer">
+        select count(*) from jsh_royalty
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause" />
+        </if>
+    </select>
+
+    <update id="updateByExampleSelective" parameterType="map">
+        update jsh_royalty
+        <set>
+            <if test="record.id != null">
+                id = #{record.id,jdbcType=BIGINT},
+            </if>
+            <if test="record.saleId != null">
+                id = #{record.saleId,jdbcType=BIGINT},
+            </if>
+            <if test="record.saleName != null">
+                saleName = #{record.saleName,jdbcType=VARCHAR},
+            </if>
+            <if test="record.wholesaleRoyalty != null">
+                wholesaleRoyalty = #{record.wholesaleRoyalty,jdbcType=DECIMAL},
+            </if>
+            <if test="record.retailRoyalty != null">
+                retailRoyalty = #{record.retailRoyalty,jdbcType=DECIMAL},
+            </if>
+            <if test="record.allRoyalty != null">
+                email = #{record.allRoyalty,jdbcType=DECIMAL},
+            </if>
+            <if test="record.monthTime != null">
+                monthTime = #{record.monthTime,jdbcType=VARCHAR},
+            </if>
+            <if test="record.status != null">
+                status = #{record.status,jdbcType=BIT},
+            </if>
+            <if test="record.accountId != null">
+                accountId = #{record.accountId,jdbcType=BIGINT},
+            </if>
+            <if test="record.accountName != null">
+                accountName = #{record.accountName,jdbcType=VARCHAR},
+            </if>
+            <if test="record.tenantId != null">
+                tenant_id = #{record.tenantId,jdbcType=BIGINT},
+            </if>
+            <if test="record.deleteFlag != null">
+                delete_Flag = #{record.deleteFlag,jdbcType=VARCHAR},
+            </if>
+        </set>
+        <if test="_parameter != null">
+            <include refid="Update_By_Example_Where_Clause" />
+        </if>
+    </update>
+
+    <update id="updateByExample" parameterType="map">
+        update jsh_royalty
+        set id = #{record.id,jdbcType=BIGINT},
+        saleId = #{record.saleId,jdbcType=BIGINT},
+        saleName = #{record.saleName,jdbcType=VARCHAR},
+        wholesaleRoyalty = #{record.wholesaleRoyalty,jdbcType=DECIMAL},
+        retailRoyalty = #{record.retailRoyalty,jdbcType=DECIMAL},
+        allRoyalty = #{record.allRoyalty,jdbcType=DECIMAL},
+        monthTime = #{record.monthTime,jdbcType=VARCHAR},
+        status = #{record.status,jdbcType=BIT},
+        accountId = #{record.accountId,jdbcType=BIGINT},
+        accountName = #{record.accountName,jdbcType=VARCHAR},
+        tenant_id = #{record.tenantId,jdbcType=BIGINT},
+        delete_Flag = #{record.deleteFlag,jdbcType=VARCHAR}
+        <if test="_parameter != null">
+            <include refid="Update_By_Example_Where_Clause" />
+        </if>
+    </update>
+
+    <update id="updateByPrimaryKeySelective" parameterType="com.jsh.erp.datasource.entities.Royalty">
+        update jsh_royalty
+        <set>
+            <if test="saleId != null">
+                saleId = #{saleId, jdbcType=BIGINT},
+            </if>
+            <if test="saleName != null">
+                saleName = #{saleName,jdbcType=VARCHAR},
+            </if>
+            <if test="wholesaleRoyalty != null">
+                wholesaleRoyalty = #{wholesaleRoyalty,jdbcType=DECIMAL},
+            </if>
+            <if test="retailRoyalty != null">
+                retailRoyalty = #{retailRoyalty,jdbcType=DECIMAL},
+            </if>
+            <if test="allRoyalty != null">
+                allRoyalty = #{allRoyalty,jdbcType=DECIMAL},
+            </if>
+            <if test="monthTime != null">
+                monthTime = #{monthTime,jdbcType=VARCHAR},
+            </if>
+            <if test="status != null">
+                status = #{status,jdbcType=BIT},
+            </if>
+            <if test="accountId != null">
+                accountId = #{accountId,jdbcType=BIGINT},
+            </if>
+            <if test="accountName != null">
+                accountName = #{accountName,jdbcType=VARCHAR},
+            </if>
+            <if test="tenantId != null">
+                tenant_id = #{tenantId,jdbcType=BIGINT},
+            </if>
+            <if test="deleteFlag != null">
+                delete_Flag = #{deleteFlag,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+
+    <update id="updateByPrimaryKey" parameterType="com.jsh.erp.datasource.entities.Royalty">
+      update jsh_royalty
+      set
+        saleId = #{saleId,jdbcType=BIGINT},
+        saleName = #{saleName,jdbcType=VARCHAR},
+        wholesaleRoyalty = #{wholesaleRoyalty,jdbcType=DECIMAL},
+        retailRoyalty = #{retailRoyalty,jdbcType=DECIMAL},
+        allRoyalty = #{allRoyalty,jdbcType=DECIMAL},
+        monthTime = #{monthTime,jdbcType=VARCHAR},
+        status = #{status,jdbcType=BIT},
+        accountId = #{accountId,jdbcType=BIGINT},
+        accountName = #{accountName,jdbcType=VARCHAR},
+        tenant_id = #{tenantId,jdbcType=BIGINT},
+        delete_Flag = #{deleteFlag,jdbcType=VARCHAR}
+      where id = #{id,jdbcType=BIGINT}
+    </update>
+
+    <select id="selectByTimeCount" resultMap="BaseResultMap">
+        SELECT
+          <include refid="Base_Column_List" />
+        FROM
+          jsh_royalty ry
+        WHERE
+          ry.monthTime = #{monthTime}
+        AND ry.delete_Flag <![CDATA[<>]]> '1'
+    </select>
+
+</mapper>

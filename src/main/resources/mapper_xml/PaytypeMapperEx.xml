@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jsh.erp.datasource.mappers.PaytypeMapperEx">
+
+    <select id="selectByConditionPaytype" parameterType="com.jsh.erp.datasource.entities.PaytypeExample" resultMap="com.jsh.erp.datasource.mappers.PaytypeMapper.BaseResultMap">
+        select *
+        FROM jsh_paytype
+        where 1=1
+        <if test="payMethod != null">
+            and payMethod like '%${payMethod}%'
+        </if>
+        and ifnull(delete_Flag,'0') !='1'
+        <if test="offset != null and rows != null">
+            limit #{offset},#{rows}
+        </if>
+    </select>
+
+    <select id="countsByPaytype" resultType="java.lang.Long">
+        SELECT
+        COUNT(id)
+        FROM jsh_paytype
+        WHERE 1=1
+        <if test="payMethod != null">
+            and payMethod like '%${payMethod}%'
+        </if>
+        and ifnull(delete_Flag,'0') !='1'
+    </select>
+
+    <update id="batchDeletePaytypeByIds">
+        update jsh_paytype
+        set delete_Flag='1'
+        where 1=1
+        and id in (
+        <foreach collection="ids" item="id" separator=",">
+            #{id}
+        </foreach>
+        )
+    </update>
+
+</mapper>

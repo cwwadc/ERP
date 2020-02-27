@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jsh.erp.datasource.mappers.CustomergroupMapperEx">
+
+    <select id="selectByConditionCustomergroup" parameterType="com.jsh.erp.datasource.entities.CustomergroupExample" resultMap="com.jsh.erp.datasource.mappers.CustomergroupMapper.BaseResultMap">
+        select *
+        FROM jsh_customergroup
+        where 1=1
+        <if test="province != null">
+            and province like '%${province}%'
+        </if>
+        and ifnull(delete_Flag,'0') !='1'
+        <if test="offset != null and rows != null">
+            limit #{offset},#{rows}
+        </if>
+    </select>
+
+    <select id="countsByCustomergroup" resultType="java.lang.Long">
+        SELECT
+        COUNT(id)
+        FROM jsh_customergroup
+        WHERE 1=1
+        <if test="province != null">
+            and province like '%${province}%'
+        </if>
+        and ifnull(delete_Flag,'0') !='1'
+    </select>
+
+    <update id="batchDeleteCustomergroupByIds">
+        update jsh_customergroup
+        set delete_Flag='1'
+        where 1=1
+        and id in (
+        <foreach collection="ids" item="id" separator=",">
+            #{id}
+        </foreach>
+        )
+    </update>
+
+</mapper>
